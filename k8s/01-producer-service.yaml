@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: producer-service
+  namespace: kafka-demo
+  labels:
+    app: producer-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: producer-service
+  template:
+    metadata:
+      labels:
+        app: producer-service
+    spec:
+      containers:
+        - name: producer-service
+          image: producer-service:1.0.0
+          # minikube image load ile yerelden yuklenen image icin: cluster disindan
+          # bir registry'den cekmeyi denemesin, zaten minikube'un kendi deposunda var.
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: producer-service
+  namespace: kafka-demo
+spec:
+  selector:
+    app: producer-service
+  ports:
+    - port: 8080
+      targetPort: 8080

@@ -18,9 +18,6 @@ spec:
       labels:
         app: kafka
     spec:
-      # Servis adımız "kafka" olduğu için K8s her pod'a otomatik KAFKA_PORT,
-      # KAFKA_SERVICE_HOST vb. env değişkenleri enjekte eder (Docker link uyumluluğu).
-      # Bu, cp-kafka image'ının "deprecated port" kontrolüne takılıp crash'e sebep olur.
       enableServiceLinks: false
       containers:
         - name: kafka
