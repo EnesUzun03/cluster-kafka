@@ -32,6 +32,8 @@ spec:
               name: controller
             - containerPort: 9094
               name: external
+            - containerPort: 9095
+              name: localhost
           env:
             - name: CLUSTER_ID
               value: "MkU3OEVBNTcwNTJENDM2Qk"
@@ -40,13 +42,13 @@ spec:
             - name: KAFKA_PROCESS_ROLES
               value: "broker,controller"
             - name: KAFKA_LISTENERS
-              value: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9094"
-            # EXTERNAL listener, kubectl port-forward + Docker Desktop'ın host.docker.internal
-            # DNS adı üzerinden cluster dışındaki araçlara (örn. docker-compose'daki kafka-ui) erişim için.
+              value: "PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093,EXTERNAL://0.0.0.0:9094,LOCALHOST://0.0.0.0:9095"
+            # EXTERNAL: docker-compose'daki kafka-ui gibi Docker container'ları için (host.docker.internal).
+            # LOCALHOST: Windows host üzerinde doğrudan çalışan quarkus dev gibi süreçler için (port-forward + localhost).
             - name: KAFKA_ADVERTISED_LISTENERS
-              value: "PLAINTEXT://kafka.kafka-demo.svc.cluster.local:9092,EXTERNAL://host.docker.internal:9094"
+              value: "PLAINTEXT://kafka.kafka-demo.svc.cluster.local:9092,EXTERNAL://host.docker.internal:9094,LOCALHOST://localhost:9095"
             - name: KAFKA_LISTENER_SECURITY_PROTOCOL_MAP
-              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT"
+              value: "CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT,EXTERNAL:PLAINTEXT,LOCALHOST:PLAINTEXT"
             - name: KAFKA_CONTROLLER_LISTENER_NAMES
               value: "CONTROLLER"
             - name: KAFKA_CONTROLLER_QUORUM_VOTERS
@@ -81,3 +83,6 @@ spec:
     - name: external
       port: 9094
       targetPort: 9094
+    - name: localhost
+      port: 9095
+      targetPort: 9095
