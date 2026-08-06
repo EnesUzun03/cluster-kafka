@@ -1,0 +1,41 @@
+# Strimzi operator'e "bana bu ozelliklerde bir node havuzu laz1m" diyoruz.
+# Ogrenme/lokal amacli: tek node, hem broker hem controller rolunde, ephemeral (kalici olmayan) depolama.
+apiVersion: kafka.strimzi.io/v1
+kind: KafkaNodePool
+metadata:
+  name: dual-role
+  namespace: third-party
+  labels:
+    strimzi.io/cluster: third-party-kafka
+spec:
+  replicas: 1
+  roles:
+    - controller
+    - broker
+  storage:
+    type: ephemeral
+---
+# Asil Kafka cluster istegi. Operator bunu gorunce yukaridaki node pool'u kullanarak
+# StatefulSet/Pod/Service gibi gercek kaynaklari kendisi olusturacak.
+apiVersion: kafka.strimzi.io/v1
+kind: Kafka
+metadata:
+  name: third-party-kafka
+  namespace: third-party
+spec:
+  kafka:
+    version: 4.3.0
+    listeners:
+      - name: plain
+        port: 9092
+        type: internal
+        tls: false
+    config:
+      offsets.topic.replication.factor: 1
+      transaction.state.log.replication.factor: 1
+      transaction.state.log.min.isr: 1
+      default.replication.factor: 1
+      min.insync.replicas: 1
+  entityOperator:
+    topicOperator: {}
+    userOperator: {}

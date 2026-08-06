@@ -1,0 +1,7 @@
+yamlApplicationConfig:
+  kafka:
+    clusters:
+      - name: third-party-kafka
+        bootstrapServers: third-party-kafka-kafka-bootstrap:9092
+  auth:
+    type: disabled
